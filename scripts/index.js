@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // @todo: DOM узлы
+  // DOM узлы
   const cardTemplate = document.querySelector('#card-template');
   const cardsContainer = document.querySelector('.places__list');
   const newCardForm = document.forms['new-place'];
@@ -9,6 +9,11 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!cardTemplate || !cardsContainer || !newCardForm || !addButton) {
     console.error('Не найдены необходимые DOM элементы!');
     return;
+  }
+
+  // Функция удаления карточки
+  function handleDeleteCard(cardElement) {
+    cardElement.remove();
   }
 
   // @todo: Функции управления попапами (вспомогательные)
@@ -30,8 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // @todo: Функция создания карточки
-  function createCard(cardData) {
+  // Функция создания карточки
+  function createCard(cardData, handleDeleteCard) {
     const cardElement = cardTemplate.content.querySelector('.card').cloneNode(true);
     const cardImage = cardElement.querySelector('.card__image');
     const cardTitle = cardElement.querySelector('.card__title');
@@ -41,10 +46,9 @@ document.addEventListener('DOMContentLoaded', () => {
     cardImage.alt = cardData.name;
     cardTitle.textContent = cardData.name;
     
-    // @todo: Функция удаления карточки
-    cardElement.querySelector('.card__delete-button').addEventListener('click', () => {
-      cardElement.remove();
-    });
+    // Обработчик удаления
+    const deleteButton = cardElement.querySelector('.card__delete-button');
+    deleteButton.addEventListener('click', () => handleDeleteCard(cardElement));
     
     // Обработчик лайка
     cardElement.querySelector('.card__like-button').addEventListener('click', (evt) => {
@@ -78,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     
-    cardsContainer.prepend(createCard(newCard));
+    cardsContainer.prepend(createCard(newCard, handleDeleteCard));
     newCardForm.reset();
     closePopup(document.querySelector('.popup_type_new-card'));
   }
@@ -107,10 +111,10 @@ document.addEventListener('DOMContentLoaded', () => {
   newCardForm.addEventListener('submit', handleNewCardSubmit);
   setupPopupCloseHandlers();
   
-  // @todo: Вывести карточки на страницу
+  // @todo: Вывести карточки на страницу 
   if (initialCards && initialCards.length) {
     initialCards.forEach(card => {
-      cardsContainer.append(createCard(card));
+      cardsContainer.append(createCard(card, handleDeleteCard));
     });
   }
 });
